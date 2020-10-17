@@ -1,10 +1,5 @@
 import numpy as np
 
-def forward_pass():
-    return 
-def backward_pass():
-    return
-
 def weights_init(model_params): # model_params: [{input_dim:N, output_dim:N}...]
     params_values = {}
 
@@ -19,5 +14,5 @@ def weights_init(model_params): # model_params: [{input_dim:N, output_dim:N}...]
     
     return params_values
 
-    def weights_init_random(size, dim):
-        return np.random.randn(size, dim) * 0.1
+def weights_init_random(size, dim):
+    return np.random.randn(size, dim) * 0.1
