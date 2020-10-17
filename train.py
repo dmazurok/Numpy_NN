@@ -15,13 +15,9 @@ for i, (layer_name, layer_params) in enumerate(config['layers'].items()):
                                 layer_params[1], activation=layer_params[-2],
                                 is_first= i == 0, is_last= i == len(config['layers'])-1)
     model.layers[layer_name] = layer
-    print(i == 0, i == len(config['layers'])-1)
-
-def forward_pass():
-    return ''
-
-def backward_pass():
-    return ''
 
 if __name__ == '__main__':
-    print(model)
+    y_ = model.forward(np.random.randn(2,1))
+    print('OUT:',y_[0])
+    y = np.array([1.,0.])
+    print(mse_loss(y_[0], y))
