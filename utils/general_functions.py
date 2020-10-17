@@ -18,3 +18,6 @@ def weights_init(model_params): # model_params: [{input_dim:N, output_dim:N}...]
             layer_output_size, 1) * 0.1
     
     return params_values
+
+    def weights_init_random(size, dim):
+        return np.random.randn(size, dim) * 0.1
