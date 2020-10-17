@@ -6,6 +6,8 @@ from utils.config_reader import Config_reader
 
 config_path = 'model_config.json'
 
+epochs = 1
+
 config_reader = Config_reader(config_path)
 config = config_reader.get_config()
 
@@ -17,7 +19,9 @@ for i, (layer_name, layer_params) in enumerate(config['layers'].items()):
     model.layers[layer_name] = layer
 
 if __name__ == '__main__':
-    y_ = model.forward(np.random.randn(2,1))
-    print('OUT:',y_[0])
-    y = np.array([1.,0.])
-    print(mse_loss(y_[0], y))
+    for epoch in range(epochs):
+        y_ = model.forward(np.random.randn(2,1))
+        print('OUT:',y_[0])
+        y = np.array([1.,0.])
+        print(mse_loss(y_[0], y))
+        model.backward()
