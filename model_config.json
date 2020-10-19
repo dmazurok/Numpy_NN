@@ -1,0 +1,10 @@
+{
+    "layers":{
+        "layer1":
+            [2,5,"relu","dense"],
+        "layer2":
+            [5,5,"relu","dense"],
+        "layer3":
+            [5,2,"relu","dense"]
+    }
+}
