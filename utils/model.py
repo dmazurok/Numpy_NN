@@ -2,6 +2,7 @@
 import numpy as np
 from .activations import get_activation_by_name
 from .general_functions import weights_init_random
+from .cost_functions import *
 
 class Layer():
     def __init__(self, input_size, output_size, activation, is_first = False, is_last = False, init = weights_init_random):
@@ -20,7 +21,9 @@ class Layer():
         self.b = init(output_size, 1)[0]
 
     def update_weight(self, w_id, lr, dW):
+        print('----- UPDATE WEIGHT',w_id,'NOW IT IS',self.W[w_id], dW, lr)
         self.W[w_id] = self.W[w_id] - lr * dW
+        print('----- AND NOW IT IS',self.W[w_id])
     
     def get_params(self):
         return self.W, self.b
@@ -69,18 +72,45 @@ class Dense(Layer):
 class Numpy_nn():
     def __init__(self):
         self.layers = {}
+        self.target = None
+        self.Z = None
     
-    def forward(self, Z):
+    def forward(self, Z, target):
+        self.target = target
         for layer in self.layers.values():
             #print('---')
             Z = layer.compute_weighted_sum(Z)
             #print('---+')
             Z = layer.compute_activation()
+            self.Z = Z.copy()
             #print('---++')
+        #print('loss is', mse_loss(target, Z))
         return Z
 
-    def backward(self):
-        return
+    def backward(self, predicted, lr):
+        out = []
+        print('Backward pass. Z=',self.Z)
+        for layer_id, layer_name in enumerate(reversed(list(self.layers.keys()))):
+            layer = self.layers[layer_name]
+            print('\n\t###Layer',layer_name,'W.shape=[',layer.W.shape,'], layer.weighted_sum_activated.shape=[',layer.weighted_sum_activated.shape,']\n')
+            out_layer = []
+            for i, z in enumerate(layer.weighted_sum_activated):
+                z = z.item()
+                print('i=',i,'z=',z)
+                for wi in range(layer.last_input.shape[0]):
+                    print('\t --- X',wi,'\n')
+                    # for each weight we need to calculate dC/dy
+                    dC_dy = mse_loss_backward(self.target[i], z) if layer.is_last else 1.
+                    print('dC_dy:',dC_dy)
+                    d_act_Y_dw = layer.activation[1](layer.weighted_sum[i])
+                    print('d_act_Y_dw:', d_act_Y_dw)
+                    dW_dy = layer.last_input[wi]
+                    print('dW_dy:',dW_dy)
+                    dC_dw = dC_dy*d_act_Y_dw*dW_dy
+                    out_layer.append(dC_dw)
+                    layer.update_weight(i*layer.last_input.shape[0]+wi, lr, dC_dw)
+            out.append(out_layer)
+        return np.array(out)
 
     def __str__(self):
         model_descr = 'Model parameters: \n'

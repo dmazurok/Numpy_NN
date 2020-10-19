@@ -8,6 +8,8 @@ config_path = 'model_config.json'
 
 epochs = 1
 
+lr = 0.1
+
 config_reader = Config_reader(config_path)
 config = config_reader.get_config()
 
@@ -20,8 +22,8 @@ for i, (layer_name, layer_params) in enumerate(config['layers'].items()):
 
 if __name__ == '__main__':
     for epoch in range(epochs):
-        y_ = model.forward(np.random.randn(2,1))
+        y_ = model.forward(np.random.randn(2,1), np.random.randn(2,1))
         print('OUT:',y_[0])
         y = np.array([1.,0.])
-        print(mse_loss(y_[0], y))
-        model.backward()
+        print('loss is',mse_loss(y_[0], y))
+        print('Predicted:',model.backward(y, lr))
